@@ -5,14 +5,10 @@ import com.company.foodapi.domain.dto.RestauranteDTO;
 import com.company.foodapi.domain.dto.UpdateRestaurante;
 import com.company.foodapi.domain.exceptions.ResourceNotFound;
 import com.company.foodapi.domain.model.Restaurante;
+import com.company.foodapi.domain.service.RestauranteService;
 import com.company.foodapi.infrastructure.repository.RestauranteRepository;
-import com.fasterxml.jackson.databind.util.BeanUtil;
-import org.apache.coyote.Response;
 import org.springframework.beans.BeanUtils;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -20,8 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
-import java.sql.SQLIntegrityConstraintViolationException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,10 +23,10 @@ import java.util.stream.Collectors;
 @RequestMapping("/restaurantes")
 public class RestauranteController {
 
-    private final RestauranteRepository restauranteRepository;
+    private final RestauranteService restauranteService;
 
-    public RestauranteController(RestauranteRepository restauranteRepository){
-        this.restauranteRepository = restauranteRepository;
+    public RestauranteController(RestauranteService restauranteService){
+        this.restauranteService = restauranteService;
     }
 
     @GetMapping(produces = {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_XML_VALUE})
@@ -41,48 +35,31 @@ public class RestauranteController {
                                              @RequestParam(value = "field") String field,
                                              @RequestParam(value = "direction") String direction){
 
-        HashMap<String, Sort.Direction> directions = new HashMap<String, Sort.Direction>();
-        directions.put("asc", Sort.Direction.ASC);
-        directions.put("desc", Sort.Direction.DESC);
-
-        PageRequest pageRequest = PageRequest.of(page, size, directions.get(direction), field);
-
-        return ResponseEntity.ok().body(restauranteRepository.BuscaTodosRestaurantes(pageRequest).map(RestauranteDTO::new));
+        return ResponseEntity.ok().body(this.restauranteService.restaurantes(page,size,field,direction));
     }
 
     @GetMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<RestauranteDTO> findById(@PathVariable Long id){
-        var restaurante = restauranteRepository.findById(id);
 
         HttpHeaders header = new HttpHeaders();
         header.add("MinhaChave","MeuValor");
-        return ResponseEntity.status(HttpStatus.OK).headers(header).body(new RestauranteDTO(restaurante.get()));
+        return ResponseEntity.status(HttpStatus.OK).headers(header).body(restauranteService.findById(id));
     }
 
 
     @PostMapping
-    public ResponseEntity<Void> createRestaurante(@RequestBody List<CreateRestauranteDTO> createRestauranteDTO){
+    public ResponseEntity<Void> createRestaurante(@RequestBody CreateRestauranteDTO createRestauranteDTO){
 
-    this.restauranteRepository.saveAll(createRestauranteDTO.stream()
-            .map(Restaurante::new).collect(Collectors.toList()));
+         this.restauranteService.createRestaurante(createRestauranteDTO);
+         return new ResponseEntity<>(HttpStatus.CREATED);
 
-        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<RestauranteDTO> updateRestaurante(@PathVariable Long id, @RequestBody UpdateRestaurante updateRestaurante){
-        Restaurante restauranteAtual = restauranteRepository.getById(id);
 
-        if (updateRestaurante != null) {
-
-            BeanUtils.copyProperties(updateRestaurante, restauranteAtual, "id");
-            
-            restauranteAtual = restauranteRepository.save(restauranteAtual);
-
-            return ResponseEntity.ok(new RestauranteDTO(restauranteAtual));
-        }
-
+        this.restauranteService.updateRestaurante(id,updateRestaurante);
         return ResponseEntity.notFound().build();
 
     }
@@ -90,9 +67,7 @@ public class RestauranteController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteRestaurante(@PathVariable Long id){
 
-        var restaurante = this.restauranteRepository.findById(id).orElseThrow(() -> new ResourceNotFound("Não foi encontrado um restaurante com esse id"));
-
-        this.restauranteRepository.delete(restaurante);
+        this.restauranteService.deleteRestaurante(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 
     }

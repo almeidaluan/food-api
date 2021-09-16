@@ -1,13 +1,17 @@
 package com.company.foodapi.domain.dto;
 
+import com.company.foodapi.domain.mapper.CozinhaMapper;
 import com.company.foodapi.domain.model.Restaurante;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
+import lombok.Data;
+import org.mapstruct.factory.Mappers;
 
 import java.math.BigDecimal;
 
 @JsonRootName("restaurante")
+@Data
 public class RestauranteDTO{
 
     @JsonIgnore
@@ -21,40 +25,12 @@ public class RestauranteDTO{
     public CozinhaDTO cozinha;
 
     public RestauranteDTO(Restaurante restaurante){
-        this.taxaFrete = restaurante.getTaxaFrete();
+        CozinhaMapper cozinhaMapper = Mappers.getMapper(CozinhaMapper.class);
+        this.id = restaurante.getId();
         this.name = restaurante.getName();
-        this.cozinha = new CozinhaDTO(restaurante.getCozinha());
+        this.taxaFrete = restaurante.getTaxaFrete();
+        this.cozinha = cozinhaMapper.CozinhaToCozinhaDTO(restaurante.getCozinha());
     }
 
-    public Long getId() {
-        return id;
-    }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public CozinhaDTO getCozinha() {
-        return cozinha;
-    }
-
-    public void setCozinha(CozinhaDTO cozinha) {
-        this.cozinha = cozinha;
-    }
-
-    public BigDecimal getTaxaFrete() {
-        return taxaFrete;
-    }
-
-    public void setTaxaFrete(BigDecimal taxaFrete) {
-        this.taxaFrete = taxaFrete;
-    }
 }

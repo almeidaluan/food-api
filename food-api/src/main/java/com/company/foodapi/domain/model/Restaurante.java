@@ -1,5 +1,6 @@
 package com.company.foodapi.domain.model;
 
+import com.company.foodapi.domain.dto.CozinhaDTO;
 import com.company.foodapi.domain.dto.CreateRestauranteDTO;
 import lombok.*;
 import org.hibernate.annotations.Proxy;
@@ -31,12 +32,5 @@ public class Restaurante {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cozinha_id")
     private Cozinha cozinha;
-
-    public Restaurante(CreateRestauranteDTO createRestauranteDTO){
-
-        this.taxaFrete = createRestauranteDTO.getTaxaFrete();
-        this.name = createRestauranteDTO.getName();
-        this.cozinha = createRestauranteDTO.getCozinha();
-    }
 
 }

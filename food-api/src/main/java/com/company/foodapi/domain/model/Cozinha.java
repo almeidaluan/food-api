@@ -1,5 +1,6 @@
 package com.company.foodapi.domain.model;
 
+import com.company.foodapi.domain.dto.CozinhaDTO;
 import lombok.*;
 
 import javax.persistence.*;
@@ -24,5 +25,11 @@ public class Cozinha {
 
     @OneToMany(mappedBy = "cozinha")
     private List<Restaurante> restaurantes = new ArrayList<>();
+
+
+    public Cozinha(CozinhaDTO cozinhaDTO){
+        this.id = cozinhaDTO.getId();
+        this.nome = cozinhaDTO.getNome();
+    }
 
 }

@@ -10,6 +10,6 @@ public class CreateRestauranteDTO {
 
     private BigDecimal taxaFrete;
     private String name;
-    private Cozinha cozinha;
+    private CozinhaDTO cozinha;
 
 }

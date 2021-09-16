@@ -1,24 +1,19 @@
 package com.company.foodapi.domain.dto;
 
 import com.company.foodapi.domain.model.Cozinha;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Data;
 
+@Data
 public class CozinhaDTO {
 
+
+    private Long id;
     private String nome;
 
     public CozinhaDTO(){
 
     }
 
-    public CozinhaDTO(Cozinha cozinha){
-        this.nome = cozinha.getNome();
-    }
 
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
 }
