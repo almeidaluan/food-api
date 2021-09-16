@@ -59,8 +59,8 @@ public class RestauranteController {
     @PutMapping("/{id}")
     public ResponseEntity<RestauranteDTO> updateRestaurante(@PathVariable Long id, @RequestBody UpdateRestaurante updateRestaurante){
 
-        this.restauranteService.updateRestaurante(id,updateRestaurante);
-        return ResponseEntity.notFound().build();
+
+        return ResponseEntity.status(HttpStatus.OK).body(this.restauranteService.updateRestaurante(id,updateRestaurante));
 
     }
 

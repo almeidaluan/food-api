@@ -18,7 +18,7 @@ public interface RestauranteMapper {
     })
     Restaurante CreateRestauranteDTOToRestaurante(CreateRestauranteDTO createRestauranteDTO);
 
-    Restaurante RestaurantetoRestauranteDTO(RestauranteDTO restauranteDTO);
+    Restaurante RestauranteDTOtoRestaurante(RestauranteDTO restauranteDTO);
 
-    RestauranteDTO RestauranteDTOtoRestaurante(Restaurante restaurante);
+    RestauranteDTO RestaurantetoRestauranteDTO(Restaurante restaurante);
 }

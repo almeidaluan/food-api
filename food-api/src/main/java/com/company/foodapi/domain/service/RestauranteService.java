@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class RestauranteService {
@@ -73,7 +74,10 @@ public class RestauranteService {
     }
 
     public RestauranteDTO updateRestaurante(Long id, UpdateRestaurante updateRestaurante){
-        Restaurante restauranteAtual = restauranteRepository.getById(id);
+        RestauranteMapper mapper = Mappers.getMapper(RestauranteMapper.class);
+
+        Restaurante restauranteAtual = restauranteRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFound("Não foi encontrado um restaurante com esse id"));;
 
         if (updateRestaurante != null) {
 

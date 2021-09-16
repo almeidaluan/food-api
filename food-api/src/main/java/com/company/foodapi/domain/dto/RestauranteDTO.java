@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 @Data
 public class RestauranteDTO{
 
-    @JsonIgnore
+
     private Long id;
 
     @JsonProperty("titulo")
