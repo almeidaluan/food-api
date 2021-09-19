@@ -19,7 +19,7 @@ public class Cozinha {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "nm_cozinha")
+    @Column(name = "nm_cozinha",unique = true,updatable = true)
     private String nome;
 
 
@@ -29,7 +29,5 @@ public class Cozinha {
 
     public Cozinha(CozinhaDTO cozinhaDTO){
         this.id = cozinhaDTO.getId();
-        this.nome = cozinhaDTO.getNome();
     }
-
 }

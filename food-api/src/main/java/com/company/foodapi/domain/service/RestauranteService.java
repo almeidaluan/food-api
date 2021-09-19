@@ -8,6 +8,7 @@ import com.company.foodapi.domain.dto.UpdateRestaurante;
 import com.company.foodapi.domain.exceptions.ResourceNotFound;
 import com.company.foodapi.domain.mapper.CozinhaMapper;
 import com.company.foodapi.domain.mapper.RestauranteMapper;
+import com.company.foodapi.domain.model.Cozinha;
 import com.company.foodapi.domain.model.Restaurante;
 import com.company.foodapi.domain.repository.CozinhaRepository;
 import com.company.foodapi.infrastructure.repository.CozinhaRepository02;
@@ -45,7 +46,6 @@ public class RestauranteService {
 
         PageRequest pageRequest = PageRequest.of(page, size, directions.get(direction), field);
 
-
         return restauranteRepository.BuscaTodosRestaurantes(pageRequest).map(RestauranteDTO::new);
     }
 
@@ -76,12 +76,19 @@ public class RestauranteService {
     public RestauranteDTO updateRestaurante(Long id, UpdateRestaurante updateRestaurante){
         RestauranteMapper mapper = Mappers.getMapper(RestauranteMapper.class);
 
+        var cozinhaId = updateRestaurante.getCozinha().getId();
+
         Restaurante restauranteAtual = restauranteRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFound("Não foi encontrado um restaurante com esse id"));;
+                .orElseThrow(() -> new ResourceNotFound("Não foi encontrado um restaurante com esse id"));
+
+        Cozinha cozinha = cozinhaRepository.findById(cozinhaId)
+                .orElseThrow(() -> new ResourceNotFound("Não foi encontrado uma cozinha com esse id"));
 
         if (updateRestaurante != null) {
 
-            BeanUtils.copyProperties(updateRestaurante, restauranteAtual, "id");
+            var teste = mapper.UpdateRestauranteToRestaurante(updateRestaurante);
+
+            BeanUtils.copyProperties(teste, restauranteAtual, "id");
 
             restauranteAtual = restauranteRepository.save(restauranteAtual);
 
