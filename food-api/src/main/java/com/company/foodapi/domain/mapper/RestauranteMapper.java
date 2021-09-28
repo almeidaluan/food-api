@@ -27,6 +27,8 @@ public interface RestauranteMapper {
     })
     Restaurante UpdateRestauranteToRestaurante(UpdateRestaurante updateRestauranteToRestaurante);
 
+    UpdateRestaurante RestauranteDTOToUpdateRestaurante(RestauranteDTO restauranteDTO);
+
     Restaurante RestauranteDTOtoRestaurante(RestauranteDTO restauranteDTO);
 
     RestauranteDTO RestaurantetoRestauranteDTO(Restaurante restaurante);

@@ -1,7 +1,6 @@
 package com.company.foodapi.domain.service;
 
 
-import com.company.foodapi.domain.dto.CozinhaDTO;
 import com.company.foodapi.domain.dto.CreateRestauranteDTO;
 import com.company.foodapi.domain.dto.RestauranteDTO;
 import com.company.foodapi.domain.dto.UpdateRestaurante;
@@ -10,19 +9,20 @@ import com.company.foodapi.domain.mapper.CozinhaMapper;
 import com.company.foodapi.domain.mapper.RestauranteMapper;
 import com.company.foodapi.domain.model.Cozinha;
 import com.company.foodapi.domain.model.Restaurante;
-import com.company.foodapi.domain.repository.CozinhaRepository;
 import com.company.foodapi.infrastructure.repository.CozinhaRepository02;
 import com.company.foodapi.infrastructure.repository.RestauranteRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ReflectionUtils;
 
+import java.lang.reflect.Field;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 
 @Service
 public class RestauranteService {
@@ -106,5 +106,34 @@ public class RestauranteService {
     }
 
 
+    public void atualizarParcial(Long restauranteId, Map<String, Object> campos) {
+        RestauranteMapper mapper = Mappers.getMapper(RestauranteMapper.class);
 
+        RestauranteDTO restauranteAtual = findById(restauranteId);
+
+        //campos.forEach();
+
+        var updateRestaurante = mapper.RestauranteDTOToUpdateRestaurante(restauranteAtual);
+
+        merge(campos, updateRestaurante);
+
+        updateRestaurante(restauranteId, updateRestaurante);
+    }
+
+
+    private void merge(Map<String, Object> dadosOrigem, UpdateRestaurante restauranteDestino) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        UpdateRestaurante restauranteOrigem = objectMapper.convertValue(dadosOrigem, UpdateRestaurante.class);
+
+        dadosOrigem.forEach((nomePropriedade, valorPropriedade) -> {
+            Field field = ReflectionUtils.findField(UpdateRestaurante.class, nomePropriedade);
+            field.setAccessible(true);
+
+            Object novoValor = ReflectionUtils.getField(field, restauranteOrigem);
+
+//			System.out.println(nomePropriedade + " = " + valorPropriedade + " = " + novoValor);
+
+            ReflectionUtils.setField(field, restauranteDestino, novoValor);
+        });
+    }
 }

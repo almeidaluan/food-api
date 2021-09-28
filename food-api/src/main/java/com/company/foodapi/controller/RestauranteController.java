@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -69,6 +70,12 @@ public class RestauranteController {
         this.restauranteService.deleteRestaurante(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 
+    }
+
+    @PatchMapping("/{restauranteId}")
+    public ResponseEntity<?> atualizarParcial(@PathVariable Long restauranteId, @RequestBody Map<String,Object> campos){
+        this.restauranteService.atualizarParcial(restauranteId,campos);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }
