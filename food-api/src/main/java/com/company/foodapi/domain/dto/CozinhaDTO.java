@@ -14,6 +14,11 @@ public class CozinhaDTO {
     public CozinhaDTO(Long id){
         this.id = id;
     }
+
+    public CozinhaDTO(String nome){
+        this.nome = nome;
+    }
+
     public Long getId() {
         return id;
     }
